@@ -1,0 +1,28 @@
+from services.gemini import create_chat
+from helpers.chat import get_user_data, add_data_to_cache
+from logging import getLogger
+logger = getLogger(__name__)
+
+
+def manage_chat(message: str, user_id: str):
+    try:
+        history = get_user_data(user_id)
+        first_response = history.pop()
+        history = history[::-1]
+        history.insert(0, {
+            "role": "user",
+            "parts": f"you're an model that can analyze insects,please answer any question from this insect:{first_response["parts"]["name"]}"
+        })
+        history.insert(1, {
+            "role": "model",
+            "parts": "I am a model that can analyze insects"
+        })
+        response = create_chat(history, message)
+        if not response:
+            raise Exception("Chat failed")
+        add_data_to_cache(user_id, {"role": "user", "parts": message})
+        add_data_to_cache(user_id, {"role": "model", "parts": response})
+        return response
+    except Exception as e:
+        logger.error(str(e))
+        return ''

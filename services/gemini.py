@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 import json
 import logging
+from fastapi import HTTPException, status
 
 logger = logging.getLogger(__name__)
 
@@ -17,12 +18,36 @@ def generate_text(prompt: str):
     return model.generate_text(prompt)
 
 
-def analyze_image(file_path: str, prompt: str) -> str:
+def analyze_image(file_path: str, prompt: str, retry: int = 0) -> str:
+    if retry > 3:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to analyze image",
+        )
     display_name = f"bug_image_${datetime.now().isoformat()}"
-    img_file = genai.upload_file(file_path, display_name=display_name)
-    response = model.generate_content([img_file, prompt])
     try:
+        img_file = genai.upload_file(file_path, display_name=display_name)
+        response = model.generate_content([img_file, prompt])
         logger.info(response.text)
         return json.loads(response.text)
     except Exception as e:
-        raise {"error": str(e)}
+        logger.error(str(e))
+        return analyze_image(file_path, prompt, retry + 1)
+
+
+def create_chat(history: list, message: str, retry: int = 0):
+    if retry > 3:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create chat",
+        )
+    try:
+        chat = model.start_chat(history=history)
+        print("chat", history)
+        response = chat.send_message(message)
+        print("response", response)
+        logger.info(response.text)
+        return response.text
+    except Exception as e:
+        logger.error(str(e))
+        return create_chat(history, message, retry + 1)
