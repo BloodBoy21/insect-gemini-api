@@ -18,7 +18,6 @@ def add_data_to_cache(key: str, data: dict):
         return False
 
 
-# TODO: implement chat retrieve data
 def get_user_data(user_id: str):
     try:
         data = cache.lrange(user_id, 0, -1)
@@ -26,3 +25,20 @@ def get_user_data(user_id: str):
     except Exception as e:
         logger.error(str(e))
         return []
+
+
+def exits_user_data(user_id: str):
+    try:
+        return cache.exists(user_id)
+    except Exception as e:
+        logger.error(str(e))
+        return False
+
+
+def reset_user_data(user_id: str):
+    try:
+        cache.delete(user_id)
+        return True
+    except Exception as e:
+        logger.error(str(e))
+        return False

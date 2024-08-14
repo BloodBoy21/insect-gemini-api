@@ -43,6 +43,9 @@ async def upload_file(file: UploadFile = File(...), user_id: str = None):
     try:
         res = gemini.analyze_image(path, FILE_ANALYZE_PROMPT)
         delete_file(path)
+        exits_user_data = chat.exits_user_data(user_id)
+        if exits_user_data:
+            chat.reset_user_data(user_id)
         chat.add_data_to_cache(user_id, {"role": "model", "parts": res})
         return {"data": res}
     except Exception as e:
