@@ -1,0 +1,27 @@
+services:
+  insect-gemini-api:
+    build: .
+    container_name: insect-gemini-container
+    ports:
+      - "3000:8080"
+    environment:
+      - PORT=8080
+      - ENV=development
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - FILE_ANALYZE_PROMPT=${FILE_ANALYZE_PROMPT}
+      - REDIS_HOST=cache
+    networks: 
+      - "insect-gemini-network"
+    depends_on:
+      - cache
+  cache:
+    image: redis:alpine
+    container_name: cache-gemini
+    networks: 
+      - "insect-gemini-network"
+    ports:
+      - "6379:6379"
+
+networks:
+  insect-gemini-network:
+    driver: bridge
