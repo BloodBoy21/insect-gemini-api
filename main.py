@@ -4,6 +4,16 @@ import os
 from contextlib import asynccontextmanager
 from shared.cache import init_redis
 import logging
+from fastapi.middleware.cors import CORSMiddleware
+
+ENV = os.getenv("ENV", "development")
+
+local_origins = ["http://localhost", "http://localhost:3001", "*"]
+
+origins = os.getenv("CORS_ORIGINS", "").split(",")
+
+if ENV != "production":
+    origins += local_origins
 
 
 @asynccontextmanager
@@ -24,6 +34,14 @@ app = FastAPI(
     version="0.1.0",
     title="Gemini API",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(api_router)
