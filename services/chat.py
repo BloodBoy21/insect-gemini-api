@@ -11,7 +11,7 @@ def manage_chat(message: str, user_id: str):
         history = history[::-1]
         history.insert(0, {
             "role": "user",
-            "parts": f"you're an model that can analyze insects,please answer any question from this insect:{first_response["parts"]["name"]}"
+            "parts": f"you're an model that can analyze insects,please answer any question from this insect:{first_response["parts"]["name"]},You have previously analyzed this insect from an image and identified it for me. Now, as an expert on insects, please answer all my questions about it."
         })
         history.insert(1, {
             "role": "model",
