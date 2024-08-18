@@ -1,6 +1,7 @@
 from services.gemini import create_chat
 from helpers.chat import get_user_data, add_data_to_cache
 from logging import getLogger
+import json
 logger = getLogger(__name__)
 
 
@@ -15,7 +16,7 @@ def manage_chat(message: str, user_id: str):
         })
         history.insert(1, {
             "role": "model",
-            "parts": "I am a model that can analyze insects"
+            "parts": f"Sure i have analyzed the insect and i can answer any question about it,i will use the information i have to answer your questions. Current data:{json.dumps(first_response['parts'])}"
         })
         response = create_chat(history, message)
         if not response:
