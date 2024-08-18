@@ -12,6 +12,9 @@ cache = None
 def init_redis():
     global cache
     try:
+        print(
+            f"Connecting to Redis at {REDIS_HOST}:{REDIS_PORT}, db={REDIS_DB}, tls={REDIS_TLS}"
+        )
         cache = Redis(
             host=REDIS_HOST,
             port=REDIS_PORT,
