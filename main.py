@@ -64,4 +64,6 @@ if __name__ == "__main__":
     if env == "development":
         load_dotenv()
         app = "main:app"
+    print("APP ENV", env)
+    print(f"Running server on {host}:{port}")
     uvicorn.run(app, host=host, port=int(port), reload=reload)

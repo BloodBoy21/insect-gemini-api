@@ -10,13 +10,16 @@ cache = None
 
 def init_redis():
     global cache
-    cache = Redis(
-        host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, password=REDIS_PASSWORD
-    )
-    if Redis.ping(cache):
-        print("Redis is running")
-    else:
-        print("Redis is not running")
+    try:
+        cache = Redis(
+            host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, password=REDIS_PASSWORD
+        )
+        if Redis.ping(cache):
+            print("Redis is running")
+        else:
+            print("Redis is not running")
+    except Exception as e:
+        print("Error connecting to Redis", e)
 
 
 def get_redis() -> Redis:
