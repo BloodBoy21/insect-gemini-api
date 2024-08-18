@@ -29,8 +29,8 @@ def analyze_image(file_path: str, prompt: str, retry: int = 0) -> str:
     try:
         img_file = genai.upload_file(file_path, display_name=display_name)
         response = model.generate_content([img_file, prompt])
-        logger.info(response.text)
-        response_data = re.sub(r"json```|```", "", response.text).strip()
+        response_data = re.sub(r"```json|```", "", response.text).strip()
+        logger.info(response_data)
         return json.loads(response_data)
     except Exception as e:
         logger.error(str(e))
