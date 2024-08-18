@@ -5,6 +5,7 @@ import json
 import logging
 from fastapi import HTTPException, status
 import re
+
 logger = logging.getLogger(__name__)
 
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
@@ -29,7 +30,7 @@ def analyze_image(file_path: str, prompt: str, retry: int = 0) -> str:
         img_file = genai.upload_file(file_path, display_name=display_name)
         response = model.generate_content([img_file, prompt])
         logger.info(response.text)
-        response = re.sub(r'json```|```', '').strip()
+        response = re.sub(r"json```|```", "", response).strip()
         return json.loads(response.text)
     except Exception as e:
         logger.error(str(e))
