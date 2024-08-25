@@ -27,3 +27,7 @@ def manage_chat(message: str, user_id: str):
     except Exception as e:
         logger.error(str(e))
         return ''
+
+
+def get_chat_history(user_id: str):
+    return get_user_data(user_id)[::-1]
